@@ -35,8 +35,9 @@ def selectPokemon():
     else:
         print("Invalid option, please try again")
 
-def getCapturedPokemon(pokemonCaptured):
+def getCapturedPokemon():
     global xp
+    pokemonCaptured = getRandomPokemon()
     print("You have captured a " + pokemonCaptured + " and gained 100 xp!")
     Pokedex.append(pokemonCaptured)
     print("This is what your Pokedex looks like: ", Pokedex)
@@ -46,31 +47,23 @@ def getRandomPokemon():
     randomPokemon = random.randint(1, 9)
     if randomPokemon == 1:
         pokemonCaptured = "Eevee"
-        getCapturedPokemon(pokemonCaptured)
     elif randomPokemon == 2:
         pokemonCaptured = "Pikachu"
-        getCapturedPokemon(pokemonCaptured)
     elif randomPokemon == 3:
         pokemonCaptured = "Onix"
-        getCapturedPokemon(pokemonCaptured)
     elif randomPokemon == 4:
         pokemonCaptured = "Meowth"
-        getCapturedPokemon(pokemonCaptured)
     elif randomPokemon == 5:
         pokemonCaptured = "Pysduck"
-        getCapturedPokemon(pokemonCaptured)
     elif randomPokemon == 6:
         pokemonCaptured = "Cubeone"
-        getCapturedPokemon(pokemonCaptured)
     elif randomPokemon == 7:
         pokemonCaptured = "Togepi"
-        getCapturedPokemon(pokemonCaptured)
     elif randomPokemon == 8:
         pokemonCaptured = "Turtwig"
-        getCapturedPokemon(pokemonCaptured)
     elif randomPokemon == 9:
         pokemonCaptured = "Pigeon"
-        getCapturedPokemon(pokemonCaptured)
+    return pokemonCaptured
 
 def eatFruit():
     global fruit
@@ -80,10 +73,15 @@ def eatFruit():
         sleep(2)
         fruit -= 1
         energy += 10
-        explore()
     else:
         print("You have no fruit")
-        explore()
+
+def goSleep():
+    global energy
+    print('Your are sleeping')
+    sleep(15)
+    energy = 20
+    print('You have regained 20 energy!')
 
 def actions():
         global fruit
@@ -121,7 +119,7 @@ def combat():
     print("You have engaged in combat with a wild pokemon!")
     winningOdds = random.randint(1, 2)
     if winningOdds == 1:
-        getRandomPokemon()
+        getCapturedPokemon()
         explore()
     elif winningOdds == 2:
         print("You have lost the battle, run away!")
@@ -139,12 +137,11 @@ def explore():
         print("You have no energy left, you must rest or eat a fruit to regain energy. You will be able to explore again in 15 seconds if you sleep.")
         option = int(input("1. Rest\n2. Eat a fruit\nSelect an option: "))
         if option == 1:
-            sleep(15)
-            energy = 20
-            print('You have regained 20 energy!')
+            goSleep()
             explore()
         elif option == 2:
             eatFruit()
+            explore()
         else:
             print("Invalid option")
 selectPokemon()
