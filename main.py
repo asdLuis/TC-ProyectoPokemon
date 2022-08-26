@@ -126,12 +126,27 @@ def combat():
         energy -= 10
         explore()
 
+def choosePokemon():
+    print('Here is what your pokedex currently looks like: ', Pokedex)
+    pokedexLength = len(Pokedex)
+    if pokedexLength > 1:
+        print('Which pokemon would you like to use?')
+        for i in range(0, pokedexLength):
+            print(i, Pokedex[i])
+        pokemonChoice = int(input('Select your pokemon: '))
+        for i in range (0, pokedexLength):
+            if pokemonChoice == i:
+                print('You have selected', Pokedex[i])
+                print('You are now fighting a wild pokemon with', Pokedex[i])
+                i += 1
+
 def explore():
     global energy
     global fruit
     if energy > 0:
         print("You are exploring the wild")
         print("You have found a wild pokemon")
+        choosePokemon()
         actions()
     else:
         print("You have no energy left, you must rest or eat a fruit to regain energy. You will be able to explore again in 15 seconds if you sleep.")
