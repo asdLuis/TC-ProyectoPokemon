@@ -44,26 +44,14 @@ def getCapturedPokemon():
     xp += 100
 
 def getRandomPokemon():
-    randomPokemon = random.randint(1, 9)
-    if randomPokemon == 1:
-        pokemonCaptured = "Eevee"
-    elif randomPokemon == 2:
-        pokemonCaptured = "Pikachu"
-    elif randomPokemon == 3:
-        pokemonCaptured = "Onix"
-    elif randomPokemon == 4:
-        pokemonCaptured = "Meowth"
-    elif randomPokemon == 5:
-        pokemonCaptured = "Pysduck"
-    elif randomPokemon == 6:
-        pokemonCaptured = "Cubeone"
-    elif randomPokemon == 7:
-        pokemonCaptured = "Togepi"
-    elif randomPokemon == 8:
-        pokemonCaptured = "Turtwig"
-    elif randomPokemon == 9:
-        pokemonCaptured = "Pigeon"
-    return pokemonCaptured
+    # Available pokemon for the program to choose from
+    pokemonList = ["Pikachu", "Caterpie", "Pidgey", "Bulbasaur", "Squirtle", "Staryu", "Goldeen", "Horsea", "Togepi", "Psyduck", "Onix", "Geodude", "Zubat", "Vulpix", "Eevee",
+    "Meowth", "Magikarp", "Shellder", "Ekans", "Growlie", "Koffing", "Metapod", "Weedle", "Rattata", "Sandshrew", "Nidoran", "Nidoran", "Clefairy", "Jigglypuff", "Zubat", "Oddish",
+    "Paras", "Venonat", "Diglet", "Mankey", "Poliwag", "Abra", "Machop", "Bellsprout", "Tentacool", "Geodude", "Ponyta", "Slowpoke", "Magnemite", "Doduo", "Seel", "Grimer",
+     "Shellder"]
+     # Chooses a random pokemon from the list
+    randomPokemon = random.choice(pokemonList)
+    return randomPokemon
 
 def eatFruit():
     global fruit
