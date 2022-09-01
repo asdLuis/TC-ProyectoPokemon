@@ -22,6 +22,6 @@ Based on randomness to determine the effectiveness of the attacks and also on th
 ## Instructions
 
 To play the game download the file file.name and run in the console using:
-``python3 file.name.py``
+``python3 main.py``
 
 Instructions are inside of the code, just follow the order to play.

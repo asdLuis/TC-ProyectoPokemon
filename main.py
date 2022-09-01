@@ -6,9 +6,10 @@ xp = 0
 fruit = 5
 energy = 100
 
+print("Welcome to the world of Pokemon, as a new trainer you can only choose one pokemon. But first, you must choose your name:")
+name = input("Enter your name: ")
+
 def selectPokemon():
-    print("Welcome to the world of Pokemon, as a new trainer you can only choose one pokemon. But first, you must choose your name:")
-    name = input("Enter your name: ")
     print("Hello " + name + ", you must now choose your pokemon! Take a look at the list below and choose wisely as this will be your only pokemon for now.")
     print("1. Charmander")
     print("2. Squirtle")
@@ -34,6 +35,7 @@ def selectPokemon():
         Pokedex.append("Bulbasaur")
     else:
         print("Invalid option, please try again")
+        selectPokemon()
 
 def getCapturedPokemon():
     global xp
@@ -43,27 +45,15 @@ def getCapturedPokemon():
     print("This is what your Pokedex looks like: ", Pokedex)
     xp += 100
 
-def getRandomPokemon():
-    randomPokemon = random.randint(1, 9)
-    if randomPokemon == 1:
-        pokemonCaptured = "Eevee"
-    elif randomPokemon == 2:
-        pokemonCaptured = "Pikachu"
-    elif randomPokemon == 3:
-        pokemonCaptured = "Onix"
-    elif randomPokemon == 4:
-        pokemonCaptured = "Meowth"
-    elif randomPokemon == 5:
-        pokemonCaptured = "Pysduck"
-    elif randomPokemon == 6:
-        pokemonCaptured = "Cubeone"
-    elif randomPokemon == 7:
-        pokemonCaptured = "Togepi"
-    elif randomPokemon == 8:
-        pokemonCaptured = "Turtwig"
-    elif randomPokemon == 9:
-        pokemonCaptured = "Pigeon"
-    return pokemonCaptured
+def getRandomPokemon(): 
+    # Available pokemon for the program to choose from
+    pokemonList = ["Pikachu", "Caterpie", "Pidgey", "Bulbasaur", "Squirtle", "Staryu", "Goldeen", "Horsea", "Togepi", "Psyduck", "Onix", "Geodude", "Zubat", "Vulpix", "Eevee",
+    "Meowth", "Magikarp", "Shellder", "Ekans", "Growlie", "Koffing", "Metapod", "Weedle", "Rattata", "Sandshrew", "Nidoran", "Nidoran", "Clefairy", "Jigglypuff", "Zubat", "Oddish",
+    "Paras", "Venonat", "Diglet", "Mankey", "Poliwag", "Abra", "Machop", "Bellsprout", "Tentacool", "Geodude", "Ponyta", "Slowpoke", "Magnemite", "Doduo", "Seel", "Grimer",
+     "Shellder"]
+     # Chooses a random pokemon from the list
+    randomPokemon = random.choice(pokemonList)
+    return randomPokemon
 
 def eatFruit():
     global fruit
@@ -75,6 +65,7 @@ def eatFruit():
         energy += 10
     else:
         print("You have no fruit")
+    explore()
 
 def goSleep():
     global energy
@@ -97,10 +88,7 @@ def actions():
         elif option == 3:
             eatFruit()
         elif option == 4:
-            print("You are resting...")
-            sleep(15)
-            energy += 10
-            explore()
+            confirm()
         elif option == 5:
             print("Your energy is: ", energy)
             explore()
@@ -126,23 +114,66 @@ def combat():
         energy -= 10
         explore()
 
+def confirm():
+    print('You will need to go home to rest and regain energy.')
+    homeOption = int(input('Do you want to go home? \n1. Yes \n2. No\n'))
+    if homeOption == 1:
+        returnHome()
+    elif homeOption == 2:
+        if energy > 0:
+            print('You have enough energy to continue exploring!')
+            explore()
+        else:
+            tired()
+       
+def choosePokemon():
+    pokedexLength = len(Pokedex)
+    if pokedexLength > 1:
+        print('Which pokemon would you like to use?')
+        for i in range(0, pokedexLength):
+            print(i, Pokedex[i])
+        pokemonChoice = int(input('Select your pokemon: '))
+        for i in range (0, pokedexLength):
+            if pokemonChoice == i:
+                print('You have selected', Pokedex[i])
+                print('You are now fighting a wild pokemon with', Pokedex[i])
+                i += 1
+
+def returnHome():
+    print('You just arrived home! You can now check your Pokedex, check your pokemon, or go to sleep.')
+    print('1. Check Pokedex\n2. Check Pokemon\n3. Go to sleep')
+    homeOption = int(input('Select an option: '))
+    if homeOption == 1:
+        print('Here is what your Pokedex looks like: ', Pokedex)
+        returnHome()
+    elif homeOption == 2:
+        choosePokemon()
+    elif homeOption == 3:
+        goSleep()
+    else:
+        print('Invalid option')
+        returnHome()
+
+def tired():
+    print("You have no energy left, you must rest or eat a fruit to regain energy. You will be able to explore again in 15 seconds if you sleep.")
+    option = int(input("1. Rest\n2. Eat a fruit\nSelect an option: "))
+    if option == 1:
+        confirm()
+    elif option == 2:
+        eatFruit()
+        explore()
+    else:
+        print("Invalid option")
+
 def explore():
     global energy
     global fruit
     if energy > 0:
         print("You are exploring the wild")
         print("You have found a wild pokemon")
+        choosePokemon()
         actions()
     else:
-        print("You have no energy left, you must rest or eat a fruit to regain energy. You will be able to explore again in 15 seconds if you sleep.")
-        option = int(input("1. Rest\n2. Eat a fruit\nSelect an option: "))
-        if option == 1:
-            goSleep()
-            explore()
-        elif option == 2:
-            eatFruit()
-            explore()
-        else:
-            print("Invalid option")
+        tired()
 selectPokemon()
 explore()
