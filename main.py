@@ -138,13 +138,6 @@ def choosePokemon():
                 print('You have selected', Pokedex[i])
                 print('You are now fighting a wild pokemon with', Pokedex[i])
                 i += 1
-    def confirm():
-        print('You will need to go home to rest and regain energy.')
-        homeOption = int(input('Do you want to go home? \n1. Yes \n2. No '))
-        if homeOption == 1:
-            returnHome()
-        elif homeOption == 2:
-            tired()
 
 def returnHome():
     print('You just arrived home! You can now check your Pokedex, check your pokemon, or go to sleep.')
