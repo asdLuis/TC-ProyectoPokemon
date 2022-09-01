@@ -88,7 +88,7 @@ def actions():
         elif option == 3:
             eatFruit()
         elif option == 4:
-            confirm()
+            confirmHome()
         elif option == 5:
             print("Your energy is: ", energy)
             explore()
@@ -114,10 +114,11 @@ def combat():
         energy -= 10
         explore()
 
-def confirm():
+def confirmHome():
     print('You will need to go home to rest and regain energy.')
     homeOption = int(input('Do you want to go home? \n1. Yes \n2. No\n'))
     if homeOption == 1:
+        print('You just arrived home! You can now check your Pokedex, select your pokemon, or go to sleep.')
         returnHome()
     elif homeOption == 2:
         if energy > 0:
@@ -140,8 +141,7 @@ def choosePokemon():
                 i += 1
 
 def returnHome():
-    print('You just arrived home! You can now check your Pokedex, check your pokemon, or go to sleep.')
-    print('1. Check Pokedex\n2. Check Pokemon\n3. Go to sleep')
+    print('1. Check Pokedex\n2. Select a Pokemon\n3. Go to sleep')
     homeOption = int(input('Select an option: '))
     if homeOption == 1:
         print('Here is what your Pokedex looks like: ', Pokedex)
@@ -155,10 +155,10 @@ def returnHome():
         returnHome()
 
 def tired():
-    print("You have no energy left, you must rest or eat a fruit to regain energy. You will be able to explore again in 15 seconds if you sleep.")
+    print("You have no energy left, you must rest or eat a fruit to regain energy.")
     option = int(input("1. Rest\n2. Eat a fruit\nSelect an option: "))
     if option == 1:
-        confirm()
+        confirmHome()
     elif option == 2:
         eatFruit()
         explore()
