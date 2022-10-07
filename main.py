@@ -228,7 +228,7 @@ def dodge(pokemon, damagePokemon, criticalChance):
         
     else:
         print("Invalid option")
-        dodge(pokemon, damagePokemon)
+        dodge(pokemon, damagePokemon, criticalChance)
 
 
 # Confirm if the player wants to go home
