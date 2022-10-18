@@ -8,7 +8,6 @@
 - Fight against the computer and capture awesome pokemons!
 - Fill your pokedex.
 - Capture pokemons in the wild!
-- Fight other trainers!
 
 ## Context
 
