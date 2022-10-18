@@ -14,3 +14,5 @@ Tambien faltan calificar el control de versiones ya que si se encuentran ahi
 #@asdLuis
 #asdLuis committed on Aug 26
 
+Fue eliminado el syntax de Camel Case y fue sustituido por Snake Case para cumplir con el PIP8 de Python
+
