@@ -1,3 +1,5 @@
+from re import S
+from threading import local
 from time import sleep
 import random
 
@@ -72,6 +74,7 @@ sleep(0.35)
                                                                    
 # Welcome the player to the game
 print("Welcome to the world of Pokemon, as a new trainer you can only choose one pokemon. But first, you must choose your name:")
+sleep(2)
 name = input("Enter your name: ")
 
 # Choose your pokemon and append to the player's pokedex list
@@ -82,22 +85,28 @@ def select_pokemon():
     print("3. Bulbasaur")
     pokemon = int(input("Select your pokemon: "))
     if pokemon == 1:
-        print("You have selected Charmander, great choice!") #■
+        print("You have selected Charmander, great choice!")
+        sleep(2)
         print("Charmander is a fire type pokemon, it is weak against water and strong against grass. An interesting fact about charmander is that")
         print("it can evolve into 3 different pokemon, Charmeleon, Charizard and Mega Charizard X.")
-        print("Your charmander is currently: Level 1, it has 200 hp and 10 Attack.")
-        Pokedex.append(["Charmander", 200, 10, "Fire"])
+        sleep(3)
+        print("Your charmander is currently: Level 1, it has 200 hp and 5 Attack.")
+        Pokedex.append(["Charmander", 200, 5, "Fire", 0])
     elif pokemon == 2:
         print("You have selected Squirtle, interesting choice!")
+        sleep(2)
         print("Squirtle is a water type pokemon, it is weak against grass and strong against fire. An interesting fact about squirtle is that")
         print('it can evolve into 3 different pokemon, Wartortle, Blastoise and Mega Blastoise.')
-        print('Your squirtle is currently: Level 1, it has 200 hp and 10 Attack.')
-        Pokedex.append(["Squirtle", 200, 10, "Water"])
+        sleep(3)
+        print('Your squirtle is currently: Level 1, it has 200 hp and 5 Attack.')
+        Pokedex.append(["Squirtle", 200, 5, "Water", 0])
     elif pokemon == 3:
         print("You have selected Bulbasaur, good choice!")
+        sleep(2)
         print("Wtf are you ok bro? Who chooses bulbasaur lol")
-        print('Your bulbasaur is currently: Level 1, it has 200 hp and 10 Attack.')
-        Pokedex.append(["Bulbasaur", 200, 10, "Grass"])
+        sleep(2)
+        print('Your bulbasaur is currently: Level 1, it has 200 hp and 5 Attack.')
+        Pokedex.append(["Bulbasaur", 200, 5, "Grass", 0])
     else:
         print("Invalid option, please try again")
         select_pokemon()
@@ -160,6 +169,7 @@ def actions():
             explore()   
 
 # Fight a random pokemon, not complete yet
+
 def combat():
     global energy
     global xp
@@ -167,27 +177,33 @@ def combat():
     global fruit
     print("You have engaged in combat with a wild pokemon!")
     pokemon = get_random_pokemon()
+    # Give a description of the pokemon you are fighting
     print("You are fighting a", pokemon[0], 'it has', pokemon[1], 'hp and', pokemon[2], 'attack and is a', pokemon[3], 'type pokemon')
     print("Choose your pokemon:")
     chosen_pokemon = choose_pokemon()
     print("You have chosen", chosen_pokemon[0], 'it has', chosen_pokemon[1], 'hp and', chosen_pokemon[2], 'attack and is a', chosen_pokemon[3], 'type pokemon')
-    while pokemon[1] >= 0 and chosen_pokemon[1] >= 0:
+    # While any of the pokemon have hp, continue the fight
+    while pokemon[1] > 0 or chosen_pokemon[1] > 0:
         option = int(input("Select an option:\n 1. Attack\n 2. Run\n"))
+        # If the player decides to fight
         if option == 1:
             if pokemon[1] > 0 and chosen_pokemon[1] > 0:
-                critical_user = random.randint(1, 5)
+                # Get a random number which will multiply the attack of your pokemon
+                critical_user = random.randint(1, 10)
                 damage_user = critical_user * chosen_pokemon[2]
-                damage_pokemon = critical_user * pokemon[2]
                 print("You are attacking...")
                 sleep(2)
-                if critical_user > 4:
+                # If you land a critical hit, the damage will be increased by the amount given
+                if critical_user >= 5:
                     print("Critical hit! You dealt", critical_user, "times more damage!")
                     sleep(2)
+                # Decrease the hp of the pokemon you are fighting
                 pokemon[1] -= damage_user
                 print("You dealt", damage_user, "damage!")
                 sleep(2)
                 print(pokemon[0], "has", pokemon[1], "hp left")
                 sleep(2)
+                # If the pokemon you are fighting has no hp left, you win
                 if pokemon[1] <= 0:
                     print("You have defeated the pokemon!")
                     sleep(2)
@@ -199,64 +215,97 @@ def combat():
                     chosen_pokemon[4] += 10
                     print("Your pokemon needs 100 xp to level up")
                     explore()
-                critical_user = random.randint(1, 5)
+                # If the pokemon you are fighting has hp left, it will attack you
+                # Get a random number which will multiply the attack of the enemy pokemon
+                critical_pokemon = random.randint(1, 10)
                 print(pokemon[0], "is attacking...")
-                dodge(pokemon, damage_pokemon, critical_user)
+                # Give the user the option to dodge the attack
                 sleep(2)
-                if chosen_pokemon[1] <= 0:
-                    print("You have been defeated!")
-                    explore()
+                option = int(input("Watch out! The enemy pokemon is attacking! If you dodge incorrectly you will recieve 2x more damage, do you want to dodge?\n 1. Yes\n 2. No\n"))
+                # Get a random number which will determine if you are able to dodge or not the attack
+                dodge_chance = random.randint(1, 10)
+                if option == 1:
+                    # If the random number is greater or equal than 5, you will dodge the attack
+                    if dodge_chance >= 4:
+                        print("You have dodged the attack and negated the damage!")
+                    # If the random number is less than 5, you will not dodge the attack and will recieve double the damage
+                    else:
+                        print("You have failed to dodge the attack and have recieved double the damage!")
+                        if critical_pokemon >= 5:
+                            print("Critical hit! You've been dealt", critical_pokemon * 2, "times more damage!")
+                            chosen_pokemon[1] -= (pokemon[2] * critical_pokemon) * 2
+                            sleep(2)
+                            print("You recieved", (pokemon[2] * critical_pokemon) * 2, "damage!")
+                            sleep(2)
+                            print("Your", chosen_pokemon[0], "has", chosen_pokemon[1], "hp left")
+                        elif critical_pokemon < 5:
+                            print("You recieved", pokemon[2] * pokemon[2], "damage!")
+                            chosen_pokemon[1] -= pokemon[2] * pokemon[2]
+                            sleep(2)
+                            print("Your", chosen_pokemon[0], "has", chosen_pokemon[1], "hp left")
+                # If you choose not to dodge, you will recieve regular damage
+                elif option == 2:
+                    if critical_pokemon >= 5:
+                            print("Critical hit! You've been dealt", critical_pokemon, "times more damage!")
+                            print("You recieved", pokemon[2] * critical_pokemon, "damage!")
+                            chosen_pokemon[1] -= pokemon[2] * critical_pokemon
+                    else:
+                        chosen_pokemon[1] -= pokemon[2] * pokemon[2]
+                        print("You recieved", pokemon[2] * pokemon[2], "damage!")
+                    sleep(2)
+                    print("Your", chosen_pokemon[0], "has", chosen_pokemon[1], "hp left")  
+                else:
+                    print("Invalid option")
+                    sleep(2)
+            # If your pokemon has no hp left, you lose
+            elif chosen_pokemon[1] <= 0:
+                print("You have been defeated!")
+                sleep(2)
+                print("You have lost 50 energy")
+                energy-= 50
+                chosen_pokemon[1] = 0
+                sleep(2)
+                explore()
+            # If the pokemon you are fighting has no hp left, you win
+            elif pokemon[1] <= 0:
+                print("You have defeated the pokemon!")
+                sleep(2)
+                print("You have successfully captured the", pokemon[0])
+                Pokedex.append(pokemon)
+                sleep(2)
+                print("You and your pokemon have gained 10 xp")
+                sleep(2)
+                xp += 10
+                chosen_pokemon[4] += 10
+                pokemon[1] = 0
+                print("Your pokemon needs 100 xp to level up")
+                explore()
+            else:
+                continue
         elif option == 2:
             print("You are running")
+            sleep(2)
+            print("You have waisted 30 energy")
+            energy -= 30
+            sleep(2)
             explore()
         else:
             print("Invalid option")
             combat()
-    print("You have captured a " + pokemon[0] + " and gained 100 xp!")
-    Pokedex.append(pokemon)
-    print("This is what your Pokedex looks like: ", Pokedex)
-    xp += 100
-
-# Dodge function when a pokemon attacks you
-def dodge(pokemon, damage_pokemon, critical_user):
-    global chosen_pokemon
-    option = int(input("Watch out! The enemy pokemon is attacking! If you dodge incorrectly you will recieve 2x more damage, do you want to dodge?\n 1. Yes\n 2. No\n"))
-    dodge_chance = random.randint(1, 10)
-    if option == 1:
-        if dodge_chance > 5:
-            print("You have dodged the attack and negated the damage!")
-        else:
-            print("You have been hit and recieved x2 more damage!")
-            chosen_pokemon[1] -= damage_pokemon * 2
-            sleep(2)
-            print("You recieved", damage_pokemon * 2, "damage!")
-            print("Your", chosen_pokemon[0], "has", chosen_pokemon[1], "hp left")
-    elif option == 2:
-        if critical_user > 4:
-                print("Critical hit! You've been dealt", critical_user, "times more damage!")
-                print("You recieved", damage_pokemon, "damage!")
-                chosen_pokemon[1] -= damage_pokemon
-        else:
-            chosen_pokemon[1] -= damage_pokemon * pokemon[2]
-            print("You recieved", damage_pokemon, "damage!")
-        sleep(2)
-        print("Your", chosen_pokemon[0], "has", chosen_pokemon[1], "hp left") 
-        
-    else:
-        print("Invalid option")
-        dodge(pokemon, damage_pokemon, critical_user)
-
 
 # Confirm if the player wants to go home
 def confirm_home():
     print('You will need to go home to rest and regain energy.')
+    sleep(2)
     home_option = int(input('Do you want to go home? \n1. Yes \n2. No\n'))
     if home_option == 1:
         print('You just arrived home! You can now check your Pokedex, select your pokemon, or go to sleep.')
+        sleep(2)
         returnHome()
     elif home_option == 2:
         if energy > 0:
             print('You have enough energy to continue exploring!')
+            sleep(2)
             explore()
         else:
             tired()
@@ -271,17 +320,22 @@ def choose_pokemon():
 # Return home to check your Pokedex, select a pokemon, or go to sleep
 def returnHome():
     print('1. Check Pokedex\n2. Select a Pokemon\n3. Go to sleep\n4. Go back to exploring')
+    sleep(2)
     home_option = int(input('Select an option: '))
     if home_option == 1:
         print('Here is what your Pokedex looks like: ', Pokedex)
+        sleep(2)
         returnHome()
     elif home_option == 2:
         choose_pokemon()
+        sleep(2)
         explore()
     elif home_option == 3:
         go_sleep()
+        sleep(2)
     elif home_option == 4:
         explore()
+        sleep(2)
     else:
         print('Invalid option')
         returnHome()
@@ -289,7 +343,9 @@ def returnHome():
 # If the player is tired, they must go home to regain energy or eat fruit
 def tired():
     print("You have no energy left, you must rest or eat a fruit to regain energy.")
+    sleep(2)
     option = int(input("1. Rest\n2. Eat a fruit\nSelect an option: "))
+    sleep(2)
     if option == 1:
         confirm_home()
     elif option == 2:
@@ -302,9 +358,16 @@ def tired():
 def explore():
     global energy
     global fruit
+    time_wait = random.randint(1, 20)
     if energy > 0:
-        print("You are exploring the wild")
-        print("You have found a wild pokemon")
+        print("You are exploring the wild...")
+        for i in range(time_wait):
+            print("... *walking* ...")
+            sleep(1)
+        print("... *alert* ...")
+        sleep(1)
+        print("You have found a wild pokemon and it is ready to fight!")
+        sleep(2)
         actions()
     else:
         tired()
