@@ -1,5 +1,3 @@
-from re import S
-from threading import local
 from time import sleep
 import random
 
