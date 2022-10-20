@@ -1,9 +1,13 @@
-from re import S
-from threading import local
 from time import sleep
 import random
 
+# Initialize the player's stats
+xp = 0
+fruit = 5
+energy = 100
 Pokedex = []
+# Inventory = Fruit, , Hyper Potion, Full Restore, Pokeball, Super Ball
+Inventory = [5, 5, 5, 5, 1]
 chosen_pokemon = 0
 # Create a matrix with the pokemons and their stats
 pokemon_list = [
@@ -50,11 +54,6 @@ pokemon_list = [
     ["Diglett", 200, 5, "Ground", 0],
     ["Dugtrio", 200, 5, "Ground", 0],
     ]
-
-# Initialize the player's stats
-xp = 0
-fruit = 5
-energy = 100
 
 print("    ____             __                                                   __") 
 sleep(0.35)                                           
@@ -119,12 +118,12 @@ def get_random_pokemon():
 
 #Eat fruit
 def eat_fruit():
-    global fruit
+    global Inventory
     global energy
-    if fruit > 0:
+    if Inventory[0] > 0:
         print("You are eating fruit...")
         sleep(2)
-        fruit -= 1
+        Inventory[0] -= 1
         energy += 10
     else:
         print("You have no fruit")
@@ -135,8 +134,8 @@ def go_sleep():
     global energy
     print('Your are sleeping')
     sleep(15)
-    energy = 15
-    print('You have regained 200 energy!')
+    energy += 15
+    print('You have regained 15 energy!')
 
 # Give the player their options
 def actions():
@@ -144,7 +143,7 @@ def actions():
         global fruit
         global energy
         global xp
-        print(" 1. Fight\n 2. Run\n 3. Eat fruit\n 4. Rest\n 5. Check Energy\n 6. Check Fruit\n 7. Check XP")
+        print(" 1. Fight\n 2. Run\n 3. Eat fruit\n 4. Rest\n 5. Check Energy\n 6. Check Fruit\n 7. Check Inventory")
         option = int(input("Select an option: "))
         if option == 1:
             combat() 
@@ -159,14 +158,54 @@ def actions():
             print("Your energy is: ", energy)
             explore()
         elif option == 6:
-            print("You have", fruit, "fruit")
+            print("You have", Inventory[0], "fruit")
             explore()
         elif option == 7:
-            print("Your XP is: ", xp)
+            print(f"Your Inventory is: {Inventory[0]} fruit, {Inventory[1]} hyper potions and {Inventory[2]} full restores")
+            use_inventory()
+
+def use_inventory():
+    choice = int(input("What would you like to do? 1. Eat a fruit, 2. Use a hyper potion, 3. Use a full restore, 4. Go back\n"))
+    if choice == 1:
+        eat_fruit()
+    elif choice == 2:
+        print("Which pokemon would you like to use it on?")
+        for i in range(len(Pokedex)):
+            print(f"{i+1}. {Pokedex[i][0]}")
+        choice = int(input("Select a pokemon: "))
+        if Pokedex[choice-1][1] == 200:
+            sleep(2)
+            print("This pokemon is already at full health!")
+            sleep(2)
             explore()
         else:
-            print("Invalid option")
-            explore()   
+            Pokedex[choice-1][1] += 100
+            Inventory[1] -= 1
+            if Pokedex[choice-1][1] > 200:
+                Pokedex[choice-1][1] = 200
+            print(f"{Pokedex[choice-1][0]} has been healed by 100 hp!")
+            sleep(2)
+            explore()
+    elif choice == 3:
+            print("Which pokemon would you like to use it on?")
+            for i in range(len(Pokedex)):
+                print(f"{i+1}. {Pokedex[i][0]}")
+            choice = int(input("Select a pokemon: "))
+            if Pokedex[choice-1][1] == 200:
+                print("This pokemon is already at full health!")
+                sleep(2)
+                explore()
+            else:
+                Pokedex[choice-1][1] = 200
+                Inventory[2] -= 1
+                print(f"{Pokedex[choice-1][0]} has been healed to full health!")
+                sleep(2)
+                explore()
+    elif choice == 4:
+        explore()
+    else:
+        print("Invalid option")
+        explore()   
 
 # Fight a random pokemon, not complete yet
 
@@ -269,23 +308,48 @@ def combat():
             # If the pokemon you are fighting has no hp left, you win
             elif pokemon[1] <= 0:
                 print("You have defeated the pokemon!")
-                sleep(2)
-                print("You have successfully captured the", pokemon[0])
-                Pokedex.append(pokemon)
-                sleep(2)
-                print("You and your pokemon have gained 10 xp")
-                sleep(2)
-                xp += 10
-                chosen_pokemon[4] += 10
-                pokemon[1] = 0
-                print("Your pokemon needs 100 xp to level up")
-                explore()
-            else:
-                continue
+                print("Now it's time to capture it!")
+                # If we have pokeballs allow the play to capture it
+                if Inventory[3] > 0 or Inventory[4] > 0:
+                    option = int(input("Select an option:\n 1. Pokeball\n 2. Superball\n"))
+                    if option == 1:
+                        if Inventory[3] > 0:
+                            Inventory[3] -= 1
+                            print("You have successfully captured the", pokemon[0])
+                            Pokedex.append(pokemon)
+                            sleep(2)
+                            print("You and your pokemon have gained 10 xp")
+                            xp += 10
+                            chosen_pokemon[4] += 10
+                            print("Your pokemon needs 100 xp to level up")
+                            explore()
+                        else:
+                            print("You don't have any pokeballs")
+                            sleep(2)
+                            explore()
+                    elif option == 2:
+                        if Inventory[4] > 0:
+                            Inventory[4] -= 1
+                            print("You have successfully captured the", pokemon[0])
+                            Pokedex.append(pokemon)
+                            sleep(2)
+                            print("You and your pokemon have gained 10 xp")
+                            xp += 10
+                            chosen_pokemon[4] += 10
+                            print("Your pokemon needs 100 xp to level up")
+                            explore()
+                        else:
+                            print("You don't have any superballs")
+                            sleep(2)
+                            explore()
+                    else:
+                        print("Invalid option")
+                        sleep(2)
+                        explore()
         elif option == 2:
             print("You are running")
             sleep(2)
-            print("You have waisted 30 energy")
+            print("You have wasted 30 energy")
             energy -= 30
             sleep(2)
             explore()
@@ -301,7 +365,7 @@ def confirm_home():
     if home_option == 1:
         print('You just arrived home! You can now check your Pokedex, select your pokemon, or go to sleep.')
         sleep(2)
-        returnHome()
+        return_home()
     elif home_option == 2:
         if energy > 0:
             print('You have enough energy to continue exploring!')
@@ -318,14 +382,14 @@ def choose_pokemon():
     return Pokedex[pokemon-1]
 
 # Return home to check your Pokedex, select a pokemon, or go to sleep
-def returnHome():
+def return_home():
     print('1. Check Pokedex\n2. Select a Pokemon\n3. Go to sleep\n4. Go back to exploring')
     sleep(2)
     home_option = int(input('Select an option: '))
     if home_option == 1:
         print('Here is what your Pokedex looks like: ', Pokedex)
         sleep(2)
-        returnHome()
+        return_home()
     elif home_option == 2:
         choose_pokemon()
         sleep(2)
@@ -338,7 +402,7 @@ def returnHome():
         sleep(2)
     else:
         print('Invalid option')
-        returnHome()
+        return_home()
 
 # If the player is tired, they must go home to regain energy or eat fruit
 def tired():
@@ -371,6 +435,10 @@ def explore():
         actions()
     else:
         tired()
+
+# Create an inventory for the player
+def inventory():
+    Inventory.append()
 
 # Start the game
 select_pokemon()
