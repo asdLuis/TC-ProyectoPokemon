@@ -9,6 +9,7 @@ Pokedex = []
 # Inventory = Fruit, , Hyper Potion, Full Restore, Pokeball, Super Ball
 Inventory = [5, 5, 5, 5, 1]
 chosen_pokemon = 0
+
 # Create a matrix with the pokemons and their stats
 pokemon_list = [
     ["Pikachu", 200, 5, "Electric", 0],
@@ -116,6 +117,8 @@ def get_random_pokemon():
     random_pokemon = random.choice(pokemon_list)
     return random_pokemon
 
+pokemon = get_random_pokemon()
+
 #Eat fruit
 def eat_fruit():
     global Inventory
@@ -143,7 +146,7 @@ def actions():
         global fruit
         global energy
         global xp
-        print(" 1. Fight\n 2. Run\n 3. Eat fruit\n 4. Rest\n 5. Check Energy\n 6. Check Fruit\n 7. Check Inventory")
+        print(" 1. Fight\n 2. Run\n 3. Eat fruit\n 4. Rest\n 5. Check Energy\n 6. Check Inventory")
         option = int(input("Select an option: "))
         if option == 1:
             combat() 
@@ -158,14 +161,13 @@ def actions():
             print("Your energy is: ", energy)
             explore()
         elif option == 6:
-            print("You have", Inventory[0], "fruit")
-            explore()
-        elif option == 7:
-            print(f"Your Inventory is: {Inventory[0]} fruit, {Inventory[1]} hyper potions and {Inventory[2]} full restores")
+            print(f"Your Inventory is: {Inventory[0]} fruit, {Inventory[1]} hyper potions, {Inventory[2]} full restores {Inventory[3]} pokeballs and {Inventory[4]} superballs")
             use_inventory()
+            explore()
+
 
 def use_inventory():
-    choice = int(input("What would you like to do? 1. Eat a fruit, 2. Use a hyper potion, 3. Use a full restore, 4. Go back\n"))
+    choice = int(input("What would you like to do? \n1. Eat a fruit \n2. Use a hyper potion \n3. Use a full restore, \n4. Go back\n"))
     if choice == 1:
         eat_fruit()
     elif choice == 2:
@@ -191,7 +193,7 @@ def use_inventory():
             for i in range(len(Pokedex)):
                 print(f"{i+1}. {Pokedex[i][0]}")
             choice = int(input("Select a pokemon: "))
-            if Pokedex[choice-1][1] == 200:
+            if Pokedex[choice-1][1] >= 200:
                 print("This pokemon is already at full health!")
                 sleep(2)
                 explore()
@@ -214,8 +216,8 @@ def combat():
     global xp
     global chosen_pokemon
     global fruit
+    global pokemon
     print("You have engaged in combat with a wild pokemon!")
-    pokemon = get_random_pokemon()
     # Give a description of the pokemon you are fighting
     print("You are fighting a", pokemon[0], 'it has', pokemon[1], 'hp and', pokemon[2], 'attack and is a', pokemon[3], 'type pokemon')
     print("Choose your pokemon:")
@@ -223,6 +225,7 @@ def combat():
     print("You have chosen", chosen_pokemon[0], 'it has', chosen_pokemon[1], 'hp and', chosen_pokemon[2], 'attack and is a', chosen_pokemon[3], 'type pokemon')
     # While any of the pokemon have hp, continue the fight
     while pokemon[1] > 0 or chosen_pokemon[1] > 0:
+        # If the pokemon you are fighting has no hp left, you win
         option = int(input("Select an option:\n 1. Attack\n 2. Run\n"))
         # If the player decides to fight
         if option == 1:
@@ -242,120 +245,192 @@ def combat():
                 sleep(2)
                 print(pokemon[0], "has", pokemon[1], "hp left")
                 sleep(2)
-                # If the pokemon you are fighting has no hp left, you win
+                # If the pokemon you are fighting has no hp left, you win and have a chance to capture it
                 if pokemon[1] <= 0:
                     print("You have defeated the pokemon!")
-                    sleep(2)
-                    print("You have successfully captured the", pokemon[0])
-                    Pokedex.append(pokemon)
-                    sleep(2)
-                    print("You and your pokemon have gained 10 xp")
-                    xp += 10
-                    chosen_pokemon[4] += 10
-                    print("Your pokemon needs 100 xp to level up")
-                    explore()
-                # If the pokemon you are fighting has hp left, it will attack you
-                # Get a random number which will multiply the attack of the enemy pokemon
-                critical_pokemon = random.randint(1, 10)
-                print(pokemon[0], "is attacking...")
-                # Give the user the option to dodge the attack
-                sleep(2)
-                option = int(input("Watch out! The enemy pokemon is attacking! If you dodge incorrectly you will recieve 2x more damage, do you want to dodge?\n 1. Yes\n 2. No\n"))
-                # Get a random number which will determine if you are able to dodge or not the attack
-                dodge_chance = random.randint(1, 10)
-                if option == 1:
-                    # If the random number is greater or equal than 5, you will dodge the attack
-                    if dodge_chance >= 4:
-                        print("You have dodged the attack and negated the damage!")
-                    # If the random number is less than 5, you will not dodge the attack and will recieve double the damage
+                    print("Now it's time to capture it!")
+                    # If we have pokeballs allow the play to capture it
+                    if Inventory[3] > 0 or Inventory[4] > 0:
+                        use_pokeball()
+                    # If we don't have pokeballs, we can't capture it
                     else:
-                        print("You have failed to dodge the attack and have recieved double the damage!")
-                        if critical_pokemon >= 5:
-                            print("Critical hit! You've been dealt", critical_pokemon * 2, "times more damage!")
-                            chosen_pokemon[1] -= (pokemon[2] * critical_pokemon) * 2
-                            sleep(2)
-                            print("You recieved", (pokemon[2] * critical_pokemon) * 2, "damage!")
-                            sleep(2)
-                            print("Your", chosen_pokemon[0], "has", chosen_pokemon[1], "hp left")
-                        elif critical_pokemon < 5:
-                            print("You recieved", pokemon[2] * pokemon[2], "damage!")
-                            chosen_pokemon[1] -= pokemon[2] * pokemon[2]
-                            sleep(2)
-                            print("Your", chosen_pokemon[0], "has", chosen_pokemon[1], "hp left")
-                # If you choose not to dodge, you will recieve regular damage
-                elif option == 2:
-                    if critical_pokemon >= 5:
-                            print("Critical hit! You've been dealt", critical_pokemon, "times more damage!")
-                            print("You recieved", pokemon[2] * critical_pokemon, "damage!")
-                            chosen_pokemon[1] -= pokemon[2] * critical_pokemon
-                    else:
-                        chosen_pokemon[1] -= pokemon[2] * pokemon[2]
-                        print("You recieved", pokemon[2] * pokemon[2], "damage!")
-                    sleep(2)
-                    print("Your", chosen_pokemon[0], "has", chosen_pokemon[1], "hp left")  
-                else:
-                    print("Invalid option")
-                    sleep(2)
-            # If your pokemon has no hp left, you lose
-            elif chosen_pokemon[1] <= 0:
-                print("You have been defeated!")
-                sleep(2)
-                print("You have lost 50 energy")
-                energy-= 50
-                chosen_pokemon[1] = 0
-                sleep(2)
-                explore()
-            # If the pokemon you are fighting has no hp left, you win
-            elif pokemon[1] <= 0:
-                print("You have defeated the pokemon!")
-                print("Now it's time to capture it!")
-                # If we have pokeballs allow the play to capture it
-                if Inventory[3] > 0 or Inventory[4] > 0:
-                    option = int(input("Select an option:\n 1. Pokeball\n 2. Superball\n"))
-                    if option == 1:
-                        if Inventory[3] > 0:
-                            Inventory[3] -= 1
-                            print("You have successfully captured the", pokemon[0])
-                            Pokedex.append(pokemon)
-                            sleep(2)
-                            print("You and your pokemon have gained 10 xp")
-                            xp += 10
-                            chosen_pokemon[4] += 10
-                            print("Your pokemon needs 100 xp to level up")
-                            explore()
-                        else:
-                            print("You don't have any pokeballs")
-                            sleep(2)
-                            explore()
-                    elif option == 2:
-                        if Inventory[4] > 0:
-                            Inventory[4] -= 1
-                            print("You have successfully captured the", pokemon[0])
-                            Pokedex.append(pokemon)
-                            sleep(2)
-                            print("You and your pokemon have gained 10 xp")
-                            xp += 10
-                            chosen_pokemon[4] += 10
-                            print("Your pokemon needs 100 xp to level up")
-                            explore()
-                        else:
-                            print("You don't have any superballs")
-                            sleep(2)
-                            explore()
-                    else:
-                        print("Invalid option")
+                        print("You don't have any pokeballs!")
                         sleep(2)
                         explore()
+                # If the pokemon you are fighting has hp left, it will attack you
+                # Get a random number which will multiply the attack of the enemy pokemon
+                print(pokemon[0], "is attacking...")
+                sleep(2)
+                # Give the user the option to dodge the attack
+                dodge()
+                # If your pokemon has no hp left, you lose
+                if chosen_pokemon[1] <= 0:
+                    print("You have been defeated!")
+                    sleep(2)
+                    print("You have lost 50 energy")
+                    energy-= 50
+                    # Set your pokemon's hp to 0 so that it doesn't go into the negatives
+                    chosen_pokemon[1] = 0
+                    # Reset the hp of the pokemon you are fighting
+                    pokemon[1] = 200
+                    sleep(2)
+                    explore()
+        # If the player decides to run
         elif option == 2:
             print("You are running")
             sleep(2)
-            print("You have wasted 30 energy")
+            print("You have wasted 30 energy running away")
             energy -= 30
+            # Reset the hp of the pokemon you are fighting
+            pokemon[1] = 200
             sleep(2)
             explore()
         else:
             print("Invalid option")
             combat()
+
+def dodge():
+    global chosen_pokemon
+    global pokemon
+    critical_pokemon = random.randint(1, 10)
+    option = int(input("Watch out! The enemy pokemon is attacking! If you dodge incorrectly you will recieve 2x more damage, do you want to dodge?\n 1. Yes\n 2. No\n"))
+    # Get a random number which will determine if you are able to dodge or not the attack
+    dodge_chance = random.randint(1, 10)
+    if option == 1:
+        # If the random number is greater or equal than 5, you will dodge the attack
+        if dodge_chance >= 4:
+            print("You have dodged the attack and negated the damage!")
+        # If the random number is less than 5, you will not dodge the attack and will recieve double the damage
+        else:
+            print("You have failed to dodge the attack and have recieved double the damage!")
+            if critical_pokemon >= 5:
+                print("Critical hit! You've been dealt", critical_pokemon * 2, "times more damage!")
+                chosen_pokemon[1] -= (pokemon[2] * critical_pokemon) * 2
+                sleep(2)
+                print("You recieved", (pokemon[2] * critical_pokemon) * 2, "damage!")
+                sleep(2)
+                print("Your", chosen_pokemon[0], "has", chosen_pokemon[1], "hp left")
+            elif critical_pokemon < 5:
+                print("You recieved", pokemon[2] * pokemon[2], "damage!")
+                chosen_pokemon[1] -= pokemon[2] * pokemon[2]
+                sleep(2)
+                print("Your", chosen_pokemon[0], "has", chosen_pokemon[1], "hp left")
+    # If you choose not to dodge, you will recieve regular damage
+    elif option == 2:
+        if critical_pokemon >= 5:
+                print("Critical hit! You've been dealt", critical_pokemon, "times more damage!")
+                print("You recieved", pokemon[2] * critical_pokemon, "damage!")
+                chosen_pokemon[1] -= pokemon[2] * critical_pokemon
+        else:
+            chosen_pokemon[1] -= pokemon[2] * pokemon[2]
+            print("You recieved", pokemon[2] * pokemon[2], "damage!")
+        sleep(2)
+        print("Your", chosen_pokemon[0], "has", chosen_pokemon[1], "hp left")  
+    else:
+        print("Invalid option")
+        sleep(2)
+        dodge()
+
+def use_pokeball():
+    global xp
+    global pokemon
+    option = int(input("Select an option:\n 1. Pokeball\n 2. Superball\n"))
+    if option == 1:
+        if Inventory[3] > 0:
+            capture_chance_one = random.randint(1, 10)
+            capture_chance_two = random.randint(1, 10)
+            capture_chance_three = random.randint(1, 10)
+            # First iteraion of the capture chance is 50%
+            print ("You have a 50% chance of capturing the pokemon")
+            sleep(2)
+            print("Attempting to capture...")
+            print("✩✩✩")
+            sleep(3)
+            if capture_chance_one >= 5:
+                print("Attempting to capture...")
+                print("★✩✩")
+                sleep(3)
+                if capture_chance_two >= 5:
+                    print("Attempting to capture...")
+                    print("★★✩")
+                    sleep(3)
+                    if capture_chance_three >= 5:
+                        print("Attempting to capture...")
+                        print("★★★")
+                        sleep(3)
+                        print("You have successfully captured the", pokemon[0])
+                        Pokedex.append(pokemon)
+                        # Set the hp of the pokemon you are fighting to half its hp after capture
+                        pokemon[1] = 100
+                        sleep(2)
+                        print("You and your pokemon have gained 10 xp")
+                        xp += 10
+                        chosen_pokemon[4] += 10
+                        print("Your pokemon needs 100 xp to level up")
+                        Inventory[3] -= 1
+                        sleep(2)
+                        explore()
+                    else:
+                        print("You have failed to capture the pokemon")
+                        Inventory[3] -= 1
+                        # Reset the hp of the pokemon you are fighting
+                        pokemon[1] = 200
+                        sleep(2)
+                        explore()
+        else:
+            print("You don't have any pokeballs")
+            sleep(2)
+            use_pokeball()
+    elif option == 2:
+            capture_chance_one = random.randint(1, 10)
+            capture_chance_two = random.randint(1, 10)
+            capture_chance_three = random.randint(1, 10)
+            # Must obtain more than 8, 3 times in a row to capture the pokemon
+            print ("You have a 80% chance of capturing the pokemon")
+            sleep(2)
+            print("Attempting to capture...")
+            print("✩✩✩")
+            sleep(3)
+            if capture_chance_one >= 8:
+                print("Attempting to capture...")
+                print("★✩✩")
+                sleep(3)
+            else:
+                print("You have failed to capture the pokemon")
+                Inventory[3] -= 1
+                sleep(2)
+                explore()
+                if capture_chance_two >= 8:
+                    print("Attempting to capture...")
+                    print("★★✩")
+                    sleep(3)
+                else:
+                    print("You have failed to capture the pokemon")
+                    Inventory[3] -= 1
+                    sleep(2)
+                    explore()
+                    if capture_chance_three >= 8:
+                        print("Attempting to capture...")
+                        print("★★★")
+                        sleep(3)
+                        print("You have successfully captured the", pokemon[0])
+                        Pokedex.append(pokemon)
+                        sleep(2)
+                        print("You and your pokemon have gained 10 xp")
+                        xp += 10
+                        chosen_pokemon[4] += 10
+                        print("Your pokemon needs 100 xp to level up")
+                        Inventory[3] -= 1
+                        sleep(2)
+                        explore()
+                    else:
+                        print("You have failed to capture the pokemon")
+                        Inventory[3] -= 1
+                        sleep(2)
+                        explore()
+    else:
+        print("Invalid option")
+        use_pokeball()
 
 # Confirm if the player wants to go home
 def confirm_home():
@@ -435,10 +510,6 @@ def explore():
         actions()
     else:
         tired()
-
-# Create an inventory for the player
-def inventory():
-    Inventory.append()
 
 # Start the game
 select_pokemon()
