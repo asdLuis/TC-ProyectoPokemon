@@ -1,4 +1,6 @@
+# Import time to use sleep function to make the game more realistic and give the user more time to read the text
 from time import sleep
+# Import random to use randint function to generate random numbers to get random stats throught the game to make it less linear
 import random
 
 # Initialize the player's stats
