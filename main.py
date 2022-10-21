@@ -91,7 +91,7 @@ def select_pokemon():
         print("it can evolve into 3 different pokemon, Charmeleon, Charizard and Mega Charizard X.")
         sleep(3)
         print("Your charmander is currently: Level 1, it has 200 hp and 5 Attack.")
-        Pokedex.append(["Charmander", 200, 5, "Fire", 0])
+        Pokedex.append(["Charmander", 200, 200, "Fire", 0])
     elif pokemon == 2:
         print("You have selected Squirtle, interesting choice!")
         sleep(2)
@@ -114,9 +114,8 @@ def select_pokemon():
 # When you capture a pokemon, send a message to the player
 def get_random_pokemon(): 
      # Chooses a random pokemon from the list
-    random_pokemon = random.choice(pokemon_list)
-    return random_pokemon
-
+    return random.choice(pokemon_list)
+    
 pokemon = get_random_pokemon()
 
 #Eat fruit
@@ -252,11 +251,13 @@ def combat():
                     # If we have pokeballs allow the play to capture it
                     if Inventory[3] > 0 or Inventory[4] > 0:
                         use_pokeball()
+                        break
                     # If we don't have pokeballs, we can't capture it
                     else:
                         print("You don't have any pokeballs!")
                         sleep(2)
                         explore()
+                        break
                 # If the pokemon you are fighting has hp left, it will attack you
                 # Get a random number which will multiply the attack of the enemy pokemon
                 print(pokemon[0], "is attacking...")
@@ -334,49 +335,61 @@ def dodge():
 def use_pokeball():
     global xp
     global pokemon
-    option = int(input("Select an option:\n 1. Pokeball\n 2. Superball\n"))
+    option = int(input("Select an option:\n 1. Pokeball\n 2. Superball\n 3. Let it go\nSelect an option: "))
     if option == 1:
         if Inventory[3] > 0:
-            capture_chance_one = random.randint(1, 10)
-            capture_chance_two = random.randint(1, 10)
-            capture_chance_three = random.randint(1, 10)
+            capture_chance_one = random.randint(1, 10) 
+            capture_chance_two = random.randint(1, 10) 
+            capture_chance_three = random.randint(1, 10) 
             # First iteraion of the capture chance is 50%
             print ("You have a 50% chance of capturing the pokemon")
             sleep(2)
             print("Attempting to capture...")
             print("✩✩✩")
             sleep(3)
-            if capture_chance_one >= 5:
+            if capture_chance_one > 5:
                 print("Attempting to capture...")
                 print("★✩✩")
                 sleep(3)
-                if capture_chance_two >= 5:
-                    print("Attempting to capture...")
-                    print("★★✩")
-                    sleep(3)
-                    if capture_chance_three >= 5:
-                        print("Attempting to capture...")
-                        print("★★★")
-                        sleep(3)
-                        print("You have successfully captured the", pokemon[0])
-                        Pokedex.append(pokemon)
-                        # Set the hp of the pokemon you are fighting to half its hp after capture
-                        pokemon[1] = 100
-                        sleep(2)
-                        print("You and your pokemon have gained 10 xp")
-                        xp += 10
-                        chosen_pokemon[4] += 10
-                        print("Your pokemon needs 100 xp to level up")
-                        Inventory[3] -= 1
-                        sleep(2)
-                        explore()
-                    else:
-                        print("You have failed to capture the pokemon")
-                        Inventory[3] -= 1
-                        # Reset the hp of the pokemon you are fighting
-                        pokemon[1] = 200
-                        sleep(2)
-                        explore()
+            else:
+                print("You have failed to capture the pokemon")
+                Inventory[3] -= 1
+                pokemon[1] = 200
+                sleep(2)
+                explore()
+            if capture_chance_two > 5:
+                print("Attempting to capture...")
+                print("★★✩")
+                sleep(3)
+            else:
+                print("You have failed to capture the pokemon")
+                Inventory[3] -= 1
+                pokemon[1] = 200
+                sleep(2)
+                explore()
+            if capture_chance_three > 5:
+                print("Attempting to capture...")
+                print("★★★")
+                sleep(3)
+                print("You have successfully captured the", pokemon[0])
+                Pokedex.append(pokemon)
+                # Set the hp of the pokemon you are fighting to half its hp after capture
+                pokemon[1] = 100
+                sleep(2)
+                print("You and your pokemon have gained 10 xp")
+                xp += 10
+                chosen_pokemon[4] += 10
+                print("Your pokemon needs 100 xp to level up")
+                Inventory[3] -= 1
+                sleep(2)
+                explore()
+            else:
+                print("You have failed to capture the pokemon")
+                Inventory[3] -= 1
+                # Reset the hp of the pokemon you are fighting
+                pokemon[1] = 200
+                sleep(2)
+                explore()
         else:
             print("You don't have any pokeballs")
             sleep(2)
@@ -386,48 +399,65 @@ def use_pokeball():
             capture_chance_two = random.randint(1, 10)
             capture_chance_three = random.randint(1, 10)
             # Must obtain more than 8, 3 times in a row to capture the pokemon
-            print ("You have a 80% chance of capturing the pokemon")
-            sleep(2)
-            print("Attempting to capture...")
-            print("✩✩✩")
-            sleep(3)
-            if capture_chance_one >= 8:
-                print("Attempting to capture...")
-                print("★✩✩")
-                sleep(3)
-            else:
-                print("You have failed to capture the pokemon")
-                Inventory[3] -= 1
+            if Inventory[4] > 0:
+                print ("You have a 80% chance of capturing the pokemon")
                 sleep(2)
-                explore()
-                if capture_chance_two >= 8:
+                print("Attempting to capture...")
+                print("✩✩✩")
+                sleep(3)
+                # Capture Chance 1
+                if capture_chance_one < 8:
+                    print("Attempting to capture...")
+                    print("★✩✩")
+                    sleep(3)
+                else:
+                    print("You have failed to capture the pokemon")
+                    Inventory[4] -= 1
+                    pokemon[1] = 200
+                    sleep(2)
+                    explore()
+                # Capture Chance 2
+                if capture_chance_two < 8:
                     print("Attempting to capture...")
                     print("★★✩")
                     sleep(3)
                 else:
                     print("You have failed to capture the pokemon")
-                    Inventory[3] -= 1
+                    Inventory[4] -= 1
+                    pokemon[1] = 200
                     sleep(2)
                     explore()
-                    if capture_chance_three >= 8:
-                        print("Attempting to capture...")
-                        print("★★★")
-                        sleep(3)
-                        print("You have successfully captured the", pokemon[0])
-                        Pokedex.append(pokemon)
-                        sleep(2)
-                        print("You and your pokemon have gained 10 xp")
-                        xp += 10
-                        chosen_pokemon[4] += 10
-                        print("Your pokemon needs 100 xp to level up")
-                        Inventory[3] -= 1
-                        sleep(2)
-                        explore()
-                    else:
-                        print("You have failed to capture the pokemon")
-                        Inventory[3] -= 1
-                        sleep(2)
-                        explore()
+                # Capture Chance 3
+                if capture_chance_three < 8:
+                    print("Attempting to capture...")
+                    print("★★★")
+                    sleep(3)
+                    print("You have successfully captured the", pokemon[0])
+                    Pokedex.append(pokemon)
+                    sleep(2)
+                    print("You and your pokemon have gained 10 xp")
+                    xp += 10
+                    chosen_pokemon[4] += 10
+                    print("Your pokemon needs 100 xp to level up")
+                    Inventory[4] -= 1
+                    pokemon[1] = 200
+                    sleep(2)
+                    explore()
+                else:
+                    print("You have failed to capture the pokemon")
+                    Inventory[4] -= 1
+                    # Reset the hp of the pokemon you are fighting
+                    pokemon[1] = 200
+                    sleep(2)
+                    explore()
+            else:
+                print("You don't have any superballs")
+                sleep(2)
+                use_pokeball()
+    elif option == 3:
+        print("You have let the pokemon go")
+        sleep(2)
+        explore()
     else:
         print("Invalid option")
         use_pokeball()
