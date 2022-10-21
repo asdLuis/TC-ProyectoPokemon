@@ -464,8 +464,6 @@ def use_pokeball():
 
 # Confirm if the player wants to go home
 def confirm_home():
-    print('You will need to go home to rest and regain energy.')
-    sleep(2)
     home_option = int(input('Do you want to go home? \n1. Yes \n2. No\n'))
     if home_option == 1:
         print('You just arrived home! You can now check your Pokedex, select your pokemon, or go to sleep.')
@@ -527,20 +525,76 @@ def tired():
 def explore():
     global energy
     global fruit
-    time_wait = random.randint(1, 20)
+    chance = random.randint(1, 7)
+    time_wait = random.randint(1, 15)
     if energy > 0:
-        print("You are exploring the wild...")
-        for i in range(time_wait):
-            print("... *walking* ...")
-            sleep(1)
-        print("... *alert* ...")
-        sleep(1)
-        print("You have found a wild pokemon and it is ready to fight!")
+        print("Since you have energy, do you want to explore? You have a 1/7 chance of finding a pokemon.")
         sleep(2)
-        actions()
+        option = int(input("1. Yes\n2. No\nSelect an option: "))
+        if option == 1:
+            print("You are exploring the wild...")
+            for i in range(time_wait):
+                print("... *walking* ...")
+                sleep(1)
+            print("... *alert* ...")
+            if chance == 1:
+                print("You have found a wild pokemon and it is ready to fight!")
+                sleep(1)
+                combat()
+            else:
+                print("You found an object! Do you want to pick it up?")
+                sleep(1)
+                option = int(input("1. Yes\n2. No\n Select an option: "))
+                if option == 1:
+                    if chance == 2:
+                        print("You found a pokeball!")
+                        Inventory[3] += 1
+                        sleep(1)
+                        print("You have", Inventory[3], "pokeballs")
+                        sleep(1)
+                        energy -= 3
+                    elif chance == 3:
+                        print("You found a superball!")
+                        Inventory[4] += 1
+                        sleep(1)
+                        print("You have", Inventory[4], "superballs")
+                        sleep(1)
+                        energy -= 3
+                    elif chance == 4:
+                        print("You found a hyper potion!")
+                        Inventory[1] += 1
+                        sleep(1)
+                        print("You have", Inventory[1], "potions")
+                        sleep(1)
+                        energy -= 3
+                    elif chance == 5:
+                        print("You found a fruit!")
+                        Inventory[0] += 1
+                        sleep(1)
+                        print("You have", Inventory[0], "fruits")
+                        sleep(1)
+                        energy -= 3
+                    elif chance == 6:
+                        print("You found a full restore!")
+                        Inventory[2] += 1
+                        sleep(1)
+                        print("You have", Inventory[2], "potions")
+                        sleep(1)
+                        energy -= 3
+                    else:
+                        print("Huh, it was just a rock.")
+                        sleep(1)
+                        energy -= 3
+        if option == 2:
+            print("You are now headed home")
+            sleep(1)
+            energy -= 3
+            confirm_home()
+        explore()       
     else:
         tired()
 
 # Start the game
 select_pokemon()
 
+# Eyyyyy, 600 lines!
