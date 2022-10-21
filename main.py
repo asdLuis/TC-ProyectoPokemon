@@ -91,7 +91,7 @@ def select_pokemon():
         print("it can evolve into 3 different pokemon, Charmeleon, Charizard and Mega Charizard X.")
         sleep(3)
         print("Your charmander is currently: Level 1, it has 200 hp and 5 Attack.")
-        Pokedex.append(["Charmander", 200, 200, "Fire", 0])
+        Pokedex.append(["Charmander", 200, 5, "Fire", 0])
     elif pokemon == 2:
         print("You have selected Squirtle, interesting choice!")
         sleep(2)
@@ -257,6 +257,7 @@ def combat():
                         print("You don't have any pokeballs!")
                         sleep(2)
                         explore()
+                        get_random_pokemon()
                         break
                 # If the pokemon you are fighting has hp left, it will attack you
                 # Get a random number which will multiply the attack of the enemy pokemon
@@ -275,6 +276,7 @@ def combat():
                     # Reset the hp of the pokemon you are fighting
                     pokemon[1] = 200
                     sleep(2)
+                    get_random_pokemon()
                     explore()
         # If the player decides to run
         elif option == 2:
@@ -284,6 +286,7 @@ def combat():
             energy -= 30
             # Reset the hp of the pokemon you are fighting
             pokemon[1] = 200
+            get_random_pokemon()
             sleep(2)
             explore()
         else:
@@ -379,8 +382,8 @@ def use_pokeball():
                 print("You and your pokemon have gained 10 xp")
                 xp += 10
                 chosen_pokemon[4] += 10
-                print("Your pokemon needs 100 xp to level up")
                 Inventory[3] -= 1
+                get_random_pokemon()
                 sleep(2)
                 explore()
             else:
@@ -389,6 +392,7 @@ def use_pokeball():
                 # Reset the hp of the pokemon you are fighting
                 pokemon[1] = 200
                 sleep(2)
+                get_random_pokemon()
                 explore()
         else:
             print("You don't have any pokeballs")
@@ -438,9 +442,9 @@ def use_pokeball():
                     print("You and your pokemon have gained 10 xp")
                     xp += 10
                     chosen_pokemon[4] += 10
-                    print("Your pokemon needs 100 xp to level up")
                     Inventory[4] -= 1
                     pokemon[1] = 200
+                    get_random_pokemon()
                     sleep(2)
                     explore()
                 else:
@@ -448,6 +452,7 @@ def use_pokeball():
                     Inventory[4] -= 1
                     # Reset the hp of the pokemon you are fighting
                     pokemon[1] = 200
+                    get_random_pokemon()
                     sleep(2)
                     explore()
             else:
@@ -456,6 +461,7 @@ def use_pokeball():
                 use_pokeball()
     elif option == 3:
         print("You have let the pokemon go")
+        get_random_pokemon()
         sleep(2)
         explore()
     else:
@@ -525,19 +531,19 @@ def tired():
 def explore():
     global energy
     global fruit
-    chance = random.randint(1, 7)
+    chance = random.randint(1, 20)
     time_wait = random.randint(1, 15)
     if energy > 0:
-        print("Since you have energy, do you want to explore? You have a 1/7 chance of finding a pokemon.")
+        print("Since you have energy, do you want to explore? You have a 2/3 chance of finding a pokemon.")
         sleep(2)
         option = int(input("1. Yes\n2. No\nSelect an option: "))
         if option == 1:
             print("You are exploring the wild...")
             for i in range(time_wait):
-                print("... *walking* ...")
+                print("... *exploring* ...")
                 sleep(1)
             print("... *alert* ...")
-            if chance == 1:
+            if chance < 7:
                 print("You have found a wild pokemon and it is ready to fight!")
                 sleep(1)
                 combat()
@@ -546,39 +552,39 @@ def explore():
                 sleep(1)
                 option = int(input("1. Yes\n2. No\n Select an option: "))
                 if option == 1:
-                    if chance == 2:
+                    if chance == 8:
                         print("You found a pokeball!")
                         Inventory[3] += 1
                         sleep(1)
-                        print("You have", Inventory[3], "pokeballs")
+                        print("You have", Inventory[3], "pokeballs!")
                         sleep(1)
                         energy -= 3
-                    elif chance == 3:
+                    elif chance == 9:
                         print("You found a superball!")
                         Inventory[4] += 1
                         sleep(1)
-                        print("You have", Inventory[4], "superballs")
+                        print("You have", Inventory[4], "superballs!")
                         sleep(1)
                         energy -= 3
-                    elif chance == 4:
+                    elif chance == 10:
                         print("You found a hyper potion!")
                         Inventory[1] += 1
                         sleep(1)
-                        print("You have", Inventory[1], "potions")
+                        print("You have", Inventory[1], "potions!")
                         sleep(1)
                         energy -= 3
-                    elif chance == 5:
+                    elif chance == 11:
                         print("You found a fruit!")
                         Inventory[0] += 1
                         sleep(1)
-                        print("You have", Inventory[0], "fruits")
+                        print("You have", Inventory[0], "fruit!")
                         sleep(1)
                         energy -= 3
-                    elif chance == 6:
+                    elif chance == 12:
                         print("You found a full restore!")
                         Inventory[2] += 1
                         sleep(1)
-                        print("You have", Inventory[2], "potions")
+                        print("You have", Inventory[2], " full restores!")
                         sleep(1)
                         energy -= 3
                     else:
@@ -591,10 +597,8 @@ def explore():
             energy -= 3
             confirm_home()
         explore()       
-    else:
+    else: # Eyyyyy, 600 lines!
         tired()
 
 # Start the game
 select_pokemon()
-
-# Eyyyyy, 600 lines!
