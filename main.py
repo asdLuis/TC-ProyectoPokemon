@@ -8,7 +8,7 @@ xp = 0
 fruit = 5
 energy = 100
 Pokedex = []
-# Inventory = Fruit, , Hyper Potion, Full Restore, Pokeball, Super Ball
+# Inventory = Fruit, Hyper Potion, Full Restore, Pokeball, Super Ball
 Inventory = [5, 5, 5, 5, 1]
 chosen_pokemon = 0
 
