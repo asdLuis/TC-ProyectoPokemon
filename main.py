@@ -597,9 +597,9 @@ def explore():
             print("You are now headed home")
             sleep(1)
             energy -= 3
-            confirm_home()
+            confirm_home() # Eyyyyy, 600 lines!
         explore()       
-    else: # Eyyyyy, 600 lines!
+    else: 
         tired()
 
 # Start the game
