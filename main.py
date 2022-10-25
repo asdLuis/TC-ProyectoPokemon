@@ -87,28 +87,28 @@ def select_pokemon():
     print("3. Bulbasaur")
     pokemon = int(input("Select your pokemon: "))
     if pokemon == 1:
+        Pokedex.append(["Charmander", 200, 5, "Fire", 0])
         print("You have selected Charmander, great choice!")
         sleep(2)
         print("Charmander is a fire type pokemon, it is weak against water and strong against grass. An interesting fact about charmander is that")
         print("it can evolve into 3 different pokemon, Charmeleon, Charizard and Mega Charizard X.")
         sleep(3)
-        print("Your charmander is currently: Level 1, it has 200 hp and 5 Attack.")
-        Pokedex.append(["Charmander", 200, 5, "Fire", 0])
+        print(f"Your charmander is currently: Level 1, it has {Pokedex[0][1]} hp and {Pokedex[0][2]} Attack.")
     elif pokemon == 2:
+        Pokedex.append(["Squirtle", 200, 5, "Water", 0])
         print("You have selected Squirtle, interesting choice!")
         sleep(2)
         print("Squirtle is a water type pokemon, it is weak against grass and strong against fire. An interesting fact about squirtle is that")
         print('it can evolve into 3 different pokemon, Wartortle, Blastoise and Mega Blastoise.')
         sleep(3)
-        print('Your squirtle is currently: Level 1, it has 200 hp and 5 Attack.')
-        Pokedex.append(["Squirtle", 200, 5, "Water", 0])
+        print(f'Your squirtle is currently: Level 1, it has {Pokedex[0][1]} hp and {Pokedex[0][2]} Attack.')
     elif pokemon == 3:
+        Pokedex.append(["Bulbasaur", 200, 5, "Grass", 0])
         print("You have selected Bulbasaur, good choice!")
         sleep(2)
         print("Wtf are you ok bro? Who chooses bulbasaur lol")
         sleep(2)
-        print('Your bulbasaur is currently: Level 1, it has 200 hp and 5 Attack.')
-        Pokedex.append(["Bulbasaur", 200, 5, "Grass", 0])
+        print(f'Your bulbasaur is currently: Level 1, it has {Pokedex[0][1]} hp and {Pokedex[0][2]} Attack.')
     else:
         print("Invalid option, please try again")
         select_pokemon()
@@ -147,7 +147,7 @@ def actions():
         global fruit
         global energy
         global xp
-        print(" 1. Fight\n 2. Run\n 3. Eat fruit\n 4. Rest\n 5. Check Energy\n 6. Check Inventory")
+        print(" 1. Fight\n 2. Run\n 3. Eat fruit\n 4. Rest\n 5. Check Energy\n 6. Use Items")
         option = int(input("Select an option: "))
         if option == 1:
             combat() 
@@ -221,8 +221,12 @@ def combat():
     print("You have engaged in combat with a wild pokemon!")
     # Give a description of the pokemon you are fighting
     print("You are fighting a", pokemon[0], 'it has', pokemon[1], 'hp and', pokemon[2], 'attack and is a', pokemon[3], 'type pokemon')
-    print("Choose your pokemon:")
     chosen_pokemon = choose_pokemon()
+    while chosen_pokemon[1] <= 0:
+        print("The pokemon you chose is unavailable, please choose another pokemon.")
+        chosen_pokemon = choose_pokemon()
+    if chosen_pokemon[1] <= 0:
+        print("")
     print("You have chosen", chosen_pokemon[0], 'it has', chosen_pokemon[1], 'hp and', chosen_pokemon[2], 'attack and is a', chosen_pokemon[3], 'type pokemon')
     # While any of the pokemon have hp, continue the fight
     while pokemon[1] > 0 or chosen_pokemon[1] > 0:
@@ -472,7 +476,7 @@ def use_pokeball():
 
 # Confirm if the player wants to go home
 def confirm_home():
-    home_option = int(input('Do you want to go home? \n1. Yes \n2. No\n'))
+    home_option = int(input('Do you want to go home? \n1. Yes \n2. No\nSelect an option: '))
     if home_option == 1:
         print('You just arrived home! You can now check your Pokedex, select your pokemon, or go to sleep.')
         sleep(2)
@@ -487,10 +491,18 @@ def confirm_home():
 
 # Display the player's Pokedex and allow them to select a pokemon based on the index number and size of the Pokedex   
 def choose_pokemon():
-    for i in range(len(Pokedex)):
-        print(i+1 , Pokedex[i])
-    pokemon = int(input("Select your pokemon: "))
-    return Pokedex[pokemon-1]
+    sleep(2)
+    option = int(input("You must now choose a pokemon to fight with, if you have no available pokemon you can flee the battle. \n1. Choose a pokemon \n2. Flee\nSelect an option: "))
+    sleep(2)
+    if option == 1:
+        for i in range(len(Pokedex)):
+            print(i+1 , Pokedex[i])
+        pokemon = int(input("Select your pokemon: "))
+        return Pokedex[pokemon-1]
+    elif option == 2:
+        print("You have fled the battle")
+        sleep(2)
+        explore()
 
 # Return home to check your Pokedex, select a pokemon, or go to sleep
 def return_home():
@@ -536,6 +548,7 @@ def explore():
     chance = random.randint(1, 20)
     time_wait = random.randint(1, 15)
     if energy > 0:
+        sleep(2)
         print("Since you have energy, do you want to explore? You have a 2/3 chance of finding a pokemon.")
         sleep(2)
         option = int(input("1. Yes\n2. No\nSelect an option: "))
@@ -552,7 +565,7 @@ def explore():
             else:
                 print("You found an object! Do you want to pick it up?")
                 sleep(1)
-                option = int(input("1. Yes\n2. No\n Select an option: "))
+                option = int(input("1. Yes\n2. No\nSelect an option: "))
                 if option == 1:
                     if chance == 8:
                         print("You found a pokeball!")
@@ -593,14 +606,15 @@ def explore():
                         print("Huh, it was just a rock.")
                         sleep(1)
                         energy -= 3
+                else:
+                    print("Invalid option")
+                    sleep(1)
+                    explore()  
+                explore()    
+        else: 
+            tired() 
         if option == 2:
-            print("You are now headed home")
-            sleep(1)
-            energy -= 3
-            confirm_home() # Eyyyyy, 600 lines!
-        explore()       
-    else: 
-        tired()
+            explore()           
 
 # Start the game
 select_pokemon()
